@@ -95,7 +95,7 @@ export default function LoginPage() {
 
         <div className="mt-8 pt-6" style={{ borderTop: '1px solid #CA5995' }}>
           <p className="text-center" style={{ color: '#5D1C6A' }}>
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="font-semibold hover:underline transition-colors" style={{ color: '#CA5995' }}>
               Sign up here
             </Link>

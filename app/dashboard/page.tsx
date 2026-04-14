@@ -13,7 +13,7 @@ export default function DashboardPage() {
               <h1 className="text-3xl font-bold mb-2" style={{ color: '#5D1C6A' }}>
                 Welcome Back!
               </h1>
-              <p className="text-lg" style={{ color: '#CA5995' }}>You're all logged in and ready to go.</p>
+              <p className="text-lg" style={{ color: '#CA5995' }}>You&apos;re all logged in and ready to go.</p>
             </div>
 
             <div className="rounded-lg p-8 border mb-8" style={{ backgroundColor: '#FFB090', borderColor: '#CA5995' }}>
