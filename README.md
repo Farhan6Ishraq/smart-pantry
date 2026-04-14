@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Auth App - Login & Signup
+
+A simple Next.js application with login and signup pages using SQLite and Tailwind CSS.
+
+## Features
+
+- User registration (signup)
+- User login
+- Password hashing with bcryptjs
+- SQLite database for user storage
+- Responsive UI with Tailwind CSS
+- Simple and minimal implementation
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 3. Using the app
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Home Page**: Go to `http://localhost:3000`
+- **Sign Up**: Create a new account at `http://localhost:3000/signup`
+- **Login**: Log in at `http://localhost:3000/login`
+- **Dashboard**: After logging in, you'll be redirected to `http://localhost:3000/dashboard`
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+- `app/` - Next.js app directory with pages
+- `app/api/auth/` - API routes for signup and login
+- `app/signup` - Signup page
+- `app/login` - Login page
+- `app/dashboard` - Dashboard page shown after login
+- `lib/db.ts` - Database utilities
+- `instrumentation.ts` - Database initialization on startup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Database
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The SQLite database is stored in `data/auth.db` and is automatically created on first run.
 
-## Deploy on Vercel
+### User Table Schema
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```sql
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Testing
+
+Try these credentials after signup:
+1. Go to signup page
+2. Enter an email and password
+3. You'll be redirected to login
+4. Use the same credentials to login
+5. You'll see the dashboard page
+
+## Security Notes
+
+This is a simple implementation for learning. For production use:
+- Add CSRF protection
+- Implement proper session management
+- Use HTTPS
+- Add rate limiting
+- Implement email verification
+- Add password reset functionality
+- Use environment variables for sensitive data
