@@ -26,25 +26,46 @@ export function ensureDbInit(): Promise<void> {
         return;
       }
 
-      db.run(
-        `
-        CREATE TABLE IF NOT EXISTS users (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          email TEXT UNIQUE NOT NULL,
-          password TEXT NOT NULL,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-        `,
-        (err) => {
-          if (err && !err.message.includes('already exists')) {
-            console.error('Error creating users table:', err);
-          } else {
-            dbInitialized = true;
+      db.serialize(() => {
+        db.run(
+          `
+          CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+          )
+          `,
+          (err) => {
+            if (err && !err.message.includes('already exists')) {
+              console.error('Error creating users table:', err);
+            }
           }
-          db.close();
-          resolve();
-        }
-      );
+        );
+
+        db.run(
+          `
+          CREATE TABLE IF NOT EXISTS ingredients (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            quantity TEXT,
+            expiry_date TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+          )
+          `,
+          (err) => {
+            if (err && !err.message.includes('already exists')) {
+              console.error('Error creating ingredients table:', err);
+            } else {
+              dbInitialized = true;
+            }
+            db.close();
+            resolve();
+          }
+        );
+      });
     });
   });
 }

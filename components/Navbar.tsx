@@ -14,6 +14,7 @@ export function Navbar() {
 
   const isOnPantry = pathname === '/pantry';
   const isOnDashboard = pathname === '/dashboard';
+  const isOnInventory = pathname === '/inventory';
 
   return (
     <nav className="shadow-md" style={{ backgroundColor: '#FFF1D3' }}>
@@ -46,6 +47,18 @@ export function Navbar() {
             }}
           >
             Pantry
+          </Link>
+          <Link
+            href="/inventory"
+            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              isOnInventory ? '' : 'hover:opacity-75'
+            }`}
+            style={{
+              backgroundColor: isOnInventory ? '#CA5995' : 'transparent',
+              color: isOnInventory ? '#FFF1D3' : '#5D1C6A'
+            }}
+          >
+            Inventory
           </Link>
           <button
             onClick={handleLogout}

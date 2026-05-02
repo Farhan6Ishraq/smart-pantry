@@ -12,6 +12,30 @@ function PantryContent() {
   const [recipes, setRecipes] = useState<RecipeSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [inventoryLoaded, setInventoryLoaded] = useState(false);
+
+  const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
+
+  useEffect(() => {
+    if (userId && !inventoryLoaded) {
+      fetchInventory();
+    }
+  }, [userId, inventoryLoaded]);
+
+  const fetchInventory = async () => {
+    try {
+      const response = await fetch(`/api/inventory?userId=${userId}`);
+      if (!response.ok) throw new Error('Failed to fetch inventory');
+      const data = await response.json();
+      const inventoryIngredients = data.ingredients.map((item: any) => item.name.toLowerCase());
+      setIngredients(inventoryIngredients);
+      setInventoryLoaded(true);
+    } catch (err: any) {
+      console.error('Failed to load inventory:', err.message);
+      // Continue without inventory
+      setInventoryLoaded(true);
+    }
+  };
 
   useEffect(() => {
     if (ingredients.length === 0) {
@@ -84,12 +108,16 @@ function PantryContent() {
           {/* Header */}
           <div className="text-center mb-8 pt-4">
             <h1 className="text-4xl font-bold mb-2" style={{ color: '#5D1C6A' }}>Smart Pantry</h1>
-            <p style={{ color: '#CA5995' }}>Add your ingredients to discover recipes you can make</p>
+            <p style={{ color: '#CA5995' }}>
+              {inventoryLoaded ? 'Your pantry ingredients are loaded. Add more to discover recipes!' : 'Loading your pantry ingredients...'}
+            </p>
           </div>
 
           {/* Input Section */}
           <div className="rounded-2xl shadow-2xl p-8 mb-8" style={{ backgroundColor: '#FFF1D3' }}>
-            <label className="block font-semibold mb-3" style={{ color: '#5D1C6A' }}>Add Ingredients</label>
+            <label className="block font-semibold mb-3" style={{ color: '#5D1C6A' }}>
+              {inventoryLoaded ? 'Add More Ingredients' : 'Add Ingredients'}
+            </label>
             <input
               type="text"
               value={inputValue}

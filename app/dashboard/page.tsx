@@ -21,7 +21,7 @@ export default function DashboardPage() {
                 Get Started with Smart Pantry
               </h2>
               <p style={{ color: '#5D1C6A' }}>
-                Head to the Pantry tab above to search for recipes based on ingredients you have at home!
+                Head to the Pantry tab above to search for recipes based on ingredients you have at home, or manage your inventory!
               </p>
             </div>
 
