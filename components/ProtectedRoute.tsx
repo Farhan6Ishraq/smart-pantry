@@ -9,7 +9,6 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is logged in (in real app, would check session/token)
     const userId = localStorage.getItem('userId');
     if (!userId) {
       router.push('/login');

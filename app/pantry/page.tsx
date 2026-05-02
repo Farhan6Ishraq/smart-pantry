@@ -1,16 +1,59 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { findRecipeMatches } from '@/lib/recipes';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Navbar } from '@/components/Navbar';
+import { RecipeSearchResult } from '@/lib/recipes';
 
 function PantryContent() {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState('');
-  
-  const matchedRecipes = useMemo(() => {
-    return findRecipeMatches(ingredients);
+  const [recipes, setRecipes] = useState<RecipeSearchResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (ingredients.length === 0) {
+      setRecipes([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    const fetchRecipes = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch('/api/recipes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ingredients }),
+          signal: controller.signal
+        });
+
+        if (!response.ok) {
+          const body = await response.json().catch(() => null);
+          throw new Error(body?.error || 'Unable to fetch recipes.');
+        }
+
+        const data = await response.json();
+        setRecipes(Array.isArray(data.recipes) ? data.recipes : []);
+      } catch (error: any) {
+        if (error.name === 'AbortError') {
+          return;
+        }
+        setRecipes([]);
+        setError(error.message || 'Unable to load recipes.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipes();
+    return () => controller.abort();
   }, [ingredients]);
 
   const handleAddIngredient = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -92,15 +135,23 @@ function PantryContent() {
           {/* Results Section */}
           <div>
             <h2 className="text-2xl font-bold mb-4" style={{ color: '#5D1C6A' }}>
-              {matchedRecipes.length === 0 ? (
-                ingredients.length === 0 ? 'Start adding ingredients to see recipes' : 'No recipes match your ingredients'
-              ) : (
-                `Found ${matchedRecipes.length} recipe${matchedRecipes.length !== 1 ? 's' : ''}`
-              )}
+              {loading
+                ? 'Searching recipes...'
+                : recipes.length === 0
+                ? ingredients.length === 0
+                  ? 'Start adding ingredients to see recipes'
+                  : 'No recipes match your ingredients'
+                : `Found ${recipes.length} recipe${recipes.length !== 1 ? 's' : ''}`}
             </h2>
 
+            {error && (
+              <div className="rounded-lg p-4 mb-6 text-sm" style={{ backgroundColor: '#FFE5DE', color: '#842029', border: '1px solid #F5C2C7' }}>
+                {error}
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {matchedRecipes.map((recipe) => (
+              {recipes.map((recipe) => (
                 <div
                   key={recipe.id}
                   className="rounded-2xl shadow-lg hover:shadow-2xl transition-shadow overflow-hidden"
@@ -150,7 +201,7 @@ function PantryContent() {
                       <div className="flex flex-wrap gap-1">
                         {recipe.ingredients.map((ing, idx) => {
                           const hasIngredient = ingredients.some(userIng =>
-                            ing.toLowerCase().includes(userIng.toLowerCase()) || 
+                            ing.toLowerCase().includes(userIng.toLowerCase()) ||
                             userIng.toLowerCase().includes(ing.toLowerCase())
                           );
                           return (
@@ -173,11 +224,13 @@ function PantryContent() {
 
                   {/* Button */}
                   <div className="px-6 pb-4">
-                    <button className="w-full font-bold py-2 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
+                    <Link
+                      href={`/recipe/${recipe.id}`}
+                      className="w-full inline-flex justify-center font-bold py-2 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
                       style={{ backgroundColor: '#CA5995', color: '#FFF1D3' }}
                     >
                       View Recipe →
-                    </button>
+                    </Link>
                   </div>
                 </div>
               ))}
