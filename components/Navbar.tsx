@@ -15,6 +15,7 @@ export function Navbar() {
   const isOnPantry = pathname === '/pantry';
   const isOnDashboard = pathname === '/dashboard';
   const isOnInventory = pathname === '/inventory';
+  const isOnFavorites = pathname === '/favorites';
 
   return (
     <nav className="shadow-md" style={{ backgroundColor: '#FFF1D3' }}>
@@ -47,6 +48,18 @@ export function Navbar() {
             }}
           >
             Pantry
+          </Link>
+          <Link
+            href="/favorites"
+            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              isOnFavorites ? '' : 'hover:opacity-75'
+            }`}
+            style={{
+              backgroundColor: isOnFavorites ? '#CA5995' : 'transparent',
+              color: isOnFavorites ? '#FFF1D3' : '#5D1C6A'
+            }}
+          >
+            Favorites
           </Link>
           <Link
             href="/inventory"

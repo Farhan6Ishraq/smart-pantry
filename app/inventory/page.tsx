@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Navbar } from '@/components/Navbar';
 
@@ -24,13 +24,7 @@ function InventoryContent() {
 
   const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
 
-  useEffect(() => {
-    if (userId) {
-      fetchIngredients();
-    }
-  }, [userId]);
-
-  const fetchIngredients = async () => {
+  const fetchIngredients = useCallback(async () => {
     try {
       const response = await fetch(`/api/inventory?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch ingredients');
@@ -41,7 +35,15 @@ function InventoryContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchIngredients();
+    } else {
+      setLoading(false);
+    }
+  }, [userId, fetchIngredients]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

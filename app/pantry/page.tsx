@@ -13,29 +13,33 @@ function PantryContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [inventoryLoaded, setInventoryLoaded] = useState(false);
+  const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'ai'; content: string }[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatOpen, setChatOpen] = useState(true);
 
   const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
 
   useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const response = await fetch(`/api/inventory?userId=${userId}`);
+        if (!response.ok) throw new Error('Failed to fetch inventory');
+        const data = await response.json();
+        const inventoryIngredients = data.ingredients.map((item: any) => item.name.toLowerCase());
+        setIngredients(inventoryIngredients);
+        setInventoryLoaded(true);
+      } catch (err: any) {
+        console.error('Failed to load inventory:', err.message);
+        // Continue without inventory
+        setInventoryLoaded(true);
+      }
+    };
+
     if (userId && !inventoryLoaded) {
       fetchInventory();
     }
   }, [userId, inventoryLoaded]);
-
-  const fetchInventory = async () => {
-    try {
-      const response = await fetch(`/api/inventory?userId=${userId}`);
-      if (!response.ok) throw new Error('Failed to fetch inventory');
-      const data = await response.json();
-      const inventoryIngredients = data.ingredients.map((item: any) => item.name.toLowerCase());
-      setIngredients(inventoryIngredients);
-      setInventoryLoaded(true);
-    } catch (err: any) {
-      console.error('Failed to load inventory:', err.message);
-      // Continue without inventory
-      setInventoryLoaded(true);
-    }
-  };
 
   useEffect(() => {
     if (ingredients.length === 0) {
@@ -98,6 +102,33 @@ function PantryContent() {
   const handleClearAll = () => {
     setIngredients([]);
     setInputValue('');
+  };
+
+  const handleChatSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const userMessage = chatInput.trim();
+    setChatMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setChatInput('');
+    setChatLoading(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: userMessage })
+      });
+
+      if (!response.ok) throw new Error('Failed to get AI response');
+
+      const data = await response.json();
+      setChatMessages(prev => [...prev, { role: 'ai', content: data.response }]);
+    } catch (error) {
+      setChatMessages(prev => [...prev, { role: 'ai', content: 'Sorry, I couldn\'t generate a response right now.' }]);
+    } finally {
+      setChatLoading(false);
+    }
   };
 
   return (
@@ -252,6 +283,33 @@ function PantryContent() {
 
                   {/* Button */}
                   <div className="px-6 pb-4">
+                    <button
+                      onClick={async () => {
+                        try {
+                          const response = await fetch('/api/favorites', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              userId: parseInt(userId!),
+                              recipeId: recipe.id,
+                              title: recipe.name,
+                              image: recipe.image
+                            })
+                          });
+                          if (response.ok) {
+                            alert('Recipe added to favorites!');
+                          } else {
+                            alert('Failed to add to favorites.');
+                          }
+                        } catch (error) {
+                          alert('Error adding to favorites.');
+                        }
+                      }}
+                      className="w-full mb-2 inline-flex justify-center font-bold py-2 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
+                      style={{ backgroundColor: '#5D1C6A', color: '#FFF1D3' }}
+                    >
+                      ❤️ Favorite
+                    </button>
                     <Link
                       href={`/recipe/${recipe.id}`}
                       className="w-full inline-flex justify-center font-bold py-2 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
@@ -272,6 +330,71 @@ function PantryContent() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Floating AI Chat Widget */}
+      <div className="fixed bottom-4 right-4 z-50 w-full max-w-sm">
+        {chatOpen ? (
+          <div className="rounded-3xl shadow-2xl overflow-hidden border border-[#CA5995]" style={{ backgroundColor: '#FFF1D3' }}>
+            <div className="flex items-center justify-between px-4 py-3" style={{ backgroundColor: '#CA5995' }}>
+              <div>
+                <p className="font-bold text-white">Recipe AI Assistant</p>
+                <p className="text-xs text-[#FFF1D3] opacity-90">Ask for unique recipes anytime</p>
+              </div>
+              <button
+                onClick={() => setChatOpen(false)}
+                className="text-white font-bold rounded-full w-8 h-8 flex items-center justify-center hover:bg-[#a84a80] transition-colors"
+                style={{ backgroundColor: '#9b4e88' }}
+                aria-label="Minimize chat"
+              >
+                −
+              </button>
+            </div>
+            <div className="p-4">
+              <div className="mb-4 max-h-64 overflow-y-auto space-y-3" style={{ backgroundColor: '#FFF1D3' }}>
+                {chatMessages.length === 0 ? (
+                  <p className="text-sm" style={{ color: '#5D1C6A' }}>Need a recipe? Send a prompt and the AI will help.</p>
+                ) : (
+                  chatMessages.map((msg, idx) => (
+                    <div key={idx} className={`px-3 py-2 rounded-2xl ${msg.role === 'user' ? 'ml-auto bg-[#CA5995] text-white' : 'bg-[#FFB090] text-[#5D1C6A]'}`}>
+                      {msg.content}
+                    </div>
+                  ))
+                )}
+                {chatLoading && (
+                  <p className="text-sm text-[#5D1C6A]">Thinking...</p>
+                )}
+              </div>
+              <form onSubmit={handleChatSubmit} className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="Ask for recipe ideas..."
+                  className="flex-1 px-3 py-2 rounded-2xl border-2 focus:outline-none"
+                  style={{ borderColor: '#CA5995', color: '#5D1C6A', backgroundColor: '#FFFFFF' }}
+                  disabled={chatLoading}
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-2xl font-semibold"
+                  style={{ backgroundColor: '#CA5995', color: '#FFF1D3' }}
+                  disabled={chatLoading || !chatInput.trim()}
+                >
+                  Send
+                </button>
+              </form>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={() => setChatOpen(true)}
+            className="w-full rounded-full px-4 py-3 font-semibold shadow-2xl"
+            style={{ backgroundColor: '#CA5995', color: '#FFF1D3' }}
+          >
+            Open Recipe AI
+          </button>
+        )}
       </div>
     </>
   );

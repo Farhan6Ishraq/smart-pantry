@@ -56,6 +56,7 @@ export default async function RecipePage({ params }: { params: { id: string } })
               <p className="mb-2"><span className="font-semibold">Servings:</span> {recipe.servings}</p>
               <p className="mb-0"><span className="font-semibold">Ingredients:</span> {recipe.ingredients.length}</p>
             </div>
+
             <div className="flex-1 rounded-2xl p-6" style={{ backgroundColor: '#FFF1D3', border: '2px solid #CA5995' }}>
               <h2 className="text-xl font-bold mb-3" style={{ color: '#5D1C6A' }}>Ingredient List</h2>
               <ul className="space-y-2 text-sm">

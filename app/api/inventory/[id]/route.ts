@@ -15,7 +15,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ error: 'User ID and name required' }, { status: 400 });
     }
 
-    return new Promise((resolve) => {
+    return new Promise<NextResponse>((resolve) => {
       const db = new sqlite3.Database(dbPath);
 
       db.run(
@@ -52,7 +52,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       return NextResponse.json({ error: 'User ID required' }, { status: 400 });
     }
 
-    return new Promise((resolve) => {
+    return new Promise<NextResponse>((resolve) => {
       const db = new sqlite3.Database(dbPath);
 
       db.run(

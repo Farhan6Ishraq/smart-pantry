@@ -58,6 +58,25 @@ export function ensureDbInit(): Promise<void> {
           (err) => {
             if (err && !err.message.includes('already exists')) {
               console.error('Error creating ingredients table:', err);
+            }
+          }
+        );
+
+        db.run(
+          `
+          CREATE TABLE IF NOT EXISTS favorites (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            recipe_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            image TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+          )
+          `,
+          (err) => {
+            if (err && !err.message.includes('already exists')) {
+              console.error('Error creating favorites table:', err);
             } else {
               dbInitialized = true;
             }

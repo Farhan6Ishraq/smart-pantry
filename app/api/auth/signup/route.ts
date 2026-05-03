@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    return new Promise((resolve) => {
+    return new Promise<NextResponse>((resolve) => {
       const db = new sqlite3.Database(dbPath);
 
       db.run(

@@ -11,6 +11,7 @@ export interface Recipe {
 export interface RecipeSearchResult extends Recipe {
   matchCount: number;
   matchPercentage: number;
+  image?: string;
 }
 
 export function mapSpoonacularRecipeToRecipe(item: any): RecipeSearchResult {
@@ -50,7 +51,8 @@ export function mapSpoonacularRecipeToRecipe(item: any): RecipeSearchResult {
     prepTime: typeof item.readyInMinutes === 'number' ? item.readyInMinutes : 0,
     servings: typeof item.servings === 'number' ? item.servings : 0,
     matchCount,
-    matchPercentage
+    matchPercentage,
+    image: item.image
   };
 }
 

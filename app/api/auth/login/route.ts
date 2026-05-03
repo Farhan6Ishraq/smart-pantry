@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return new Promise((resolve) => {
+    return new Promise<NextResponse>((resolve) => {
       const db = new sqlite3.Database(dbPath);
 
       db.get(
