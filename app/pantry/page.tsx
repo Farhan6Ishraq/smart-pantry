@@ -31,7 +31,6 @@ function PantryContent() {
         setInventoryLoaded(true);
       } catch (err: any) {
         console.error('Failed to load inventory:', err.message);
-        // Continue without inventory
         setInventoryLoaded(true);
       }
     };
@@ -136,7 +135,6 @@ function PantryContent() {
       <Navbar />
       <div className="min-h-screen p-4" style={{ backgroundColor: '#FFF1D3' }}>
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
           <div className="text-center mb-8 pt-4">
             <h1 className="text-4xl font-bold mb-2" style={{ color: '#5D1C6A' }}>Smart Pantry</h1>
             <p style={{ color: '#CA5995' }}>
@@ -144,7 +142,6 @@ function PantryContent() {
             </p>
           </div>
 
-          {/* Input Section */}
           <div className="rounded-2xl shadow-2xl p-8 mb-8" style={{ backgroundColor: '#FFF1D3' }}>
             <label className="block font-semibold mb-3" style={{ color: '#5D1C6A' }}>
               {inventoryLoaded ? 'Add More Ingredients' : 'Add Ingredients'}
@@ -160,7 +157,6 @@ function PantryContent() {
             />
             <p className="text-sm mt-2" style={{ color: '#CA5995' }}>Try: chicken, tomato, pasta, eggs, mushroom...</p>
 
-            {/* Tags Display */}
             {ingredients.length > 0 && (
               <div className="mt-6">
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -191,7 +187,6 @@ function PantryContent() {
             )}
           </div>
 
-          {/* Results Section */}
           <div>
             <h2 className="text-2xl font-bold mb-4" style={{ color: '#5D1C6A' }}>
               {loading
@@ -216,13 +211,11 @@ function PantryContent() {
                   className="rounded-2xl shadow-lg hover:shadow-2xl transition-shadow overflow-hidden"
                   style={{ backgroundColor: '#FFF1D3', borderColor: '#CA5995', border: '2px solid #CA5995' }}
                 >
-                  {/* Recipe Header */}
-                  <div className="p-6 text-white" style={{ backgroundColor: '#CA5995' }}>
-                    <h3 className="text-xl font-bold mb-2">{recipe.name}</h3>
-                    <p className="text-sm" style={{ opacity: 0.9 }}>{recipe.description}</p>
-                  </div>
+                    <div className="p-6 text-white" style={{ backgroundColor: '#CA5995' }}>
+                      <h3 className="text-xl font-bold mb-2">{recipe.name}</h3>
+                      <p className="text-sm" style={{ opacity: 0.9 }}>{recipe.description}</p>
+                    </div>
 
-                  {/* Match Info */}
                   <div className="px-6 pt-4 pb-2">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm font-semibold" style={{ color: '#5D1C6A' }}>Match</span>
@@ -241,7 +234,6 @@ function PantryContent() {
                     </p>
                   </div>
 
-                  {/* Recipe Details */}
                   <div className="px-6 py-3" style={{ backgroundColor: '#FFB090', borderTop: '1px solid #CA5995' }}>
                     <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
                       <div>
@@ -254,7 +246,6 @@ function PantryContent() {
                       </div>
                     </div>
 
-                    {/* Ingredients Status */}
                     <div className="mb-4">
                       <p className="text-xs font-semibold mb-2" style={{ color: '#5D1C6A' }}>Ingredients:</p>
                       <div className="flex flex-wrap gap-1">
@@ -281,7 +272,6 @@ function PantryContent() {
                     </div>
                   </div>
 
-                  {/* Button */}
                   <div className="px-6 pb-4">
                     <button
                       onClick={async () => {
@@ -322,7 +312,6 @@ function PantryContent() {
               ))}
             </div>
 
-            {/* Empty State */}
             {ingredients.length === 0 && (
               <div className="text-center py-12">
                 <p style={{ color: '#CA5995' }}>Create your first meal by adding ingredients</p>
@@ -332,7 +321,6 @@ function PantryContent() {
         </div>
       </div>
 
-      {/* Floating AI Chat Widget */}
       <div className="fixed bottom-4 right-4 z-50 w-full max-w-sm">
         {chatOpen ? (
           <div className="rounded-3xl shadow-2xl overflow-hidden border border-[#CA5995]" style={{ backgroundColor: '#FFF1D3' }}>

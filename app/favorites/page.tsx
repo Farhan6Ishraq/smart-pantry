@@ -45,7 +45,6 @@ function FavoritesContent() {
       <Navbar />
       <div className="min-h-screen p-4" style={{ backgroundColor: '#FFF1D3' }}>
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
           <div className="text-center mb-8 pt-4">
             <h1 className="text-4xl font-bold mb-2" style={{ color: '#5D1C6A' }}>Favorite Recipes</h1>
             <p style={{ color: '#CA5995' }}>
@@ -66,12 +65,10 @@ function FavoritesContent() {
                 className="rounded-2xl shadow-lg hover:shadow-2xl transition-shadow overflow-hidden"
                 style={{ backgroundColor: '#FFF1D3', borderColor: '#CA5995', border: '2px solid #CA5995' }}
               >
-                {/* Recipe Header */}
-                <div className="p-6 text-white" style={{ backgroundColor: '#CA5995' }}>
-                  <h3 className="text-xl font-bold mb-2">{favorite.title}</h3>
-                </div>
+                  <div className="p-6 text-white" style={{ backgroundColor: '#CA5995' }}>
+                    <h3 className="text-xl font-bold mb-2">{favorite.title}</h3>
+                  </div>
 
-                {/* Button */}
                 <div className="px-6 pb-4 pt-4">
                   <Link
                     href={`/recipe/${favorite.recipe_id}`}
@@ -85,7 +82,6 @@ function FavoritesContent() {
             ))}
           </div>
 
-          {/* Empty State */}
           {!loading && favorites.length === 0 && (
             <div className="text-center py-12">
               <p style={{ color: '#CA5995' }}>No favorite recipes yet. Go to your pantry to add some!</p>

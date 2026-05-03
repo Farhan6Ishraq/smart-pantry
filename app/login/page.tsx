@@ -30,7 +30,6 @@ export default function LoginPage() {
         return;
       }
 
-      // Store user ID in localStorage
       if (data.userId) {
         localStorage.setItem('userId', data.userId);
       }

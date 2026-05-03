@@ -1,17 +1,23 @@
-# Auth App - Login & Signup
+# Smart Pantry App
 
-A simple Next.js application with login and signup pages using SQLite and Tailwind CSS.
+A Next.js application for pantry management, recipe search, favorites, and AI-powered recipe suggestions.
 
 ## Features
 
-- User registration (signup)
-- User login
-- Password hashing with bcryptjs
-- SQLite database for user storage
-- Responsive UI with Tailwind CSS
-- Simple and minimal implementation
+- User signup and login
+- SQLite database for users, inventory, and favorite recipes
+- Pantry ingredient tracking
+- Recipe search via Spoonacular API
+- Favorite recipes page
+- Floating AI chatbot powered by Gemini for recipe ideas
+- Tailwind CSS styling and responsive UI
 
-## Getting Started
+## Requirements
+
+- Node.js 18 or newer
+- npm
+
+## Setup
 
 ### 1. Install dependencies
 
@@ -19,62 +25,67 @@ A simple Next.js application with login and signup pages using SQLite and Tailwi
 npm install
 ```
 
-### 2. Run the development server
+### 2. Create environment variables
+
+Create a `.env.local` file in the project root and add:
+
+```env
+SPOONACULAR_API_KEY=your_spoonacular_api_key
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+### 3. Run the development server
 
 ```bash
 npm run dev
 ```
 
-The application will be available at `http://localhost:3000`
+Open `http://localhost:3000` in your browser.
 
-### 3. Using the app
+### 4. Build for production
 
-- **Home Page**: Go to `http://localhost:3000`
-- **Sign Up**: Create a new account at `http://localhost:3000/signup`
-- **Login**: Log in at `http://localhost:3000/login`
-- **Dashboard**: After logging in, you'll be redirected to `http://localhost:3000/dashboard`
+```bash
+npm run build
+```
+
+### 5. Start the production server
+
+```bash
+npm start
+```
+
+## App Usage
+
+- **Home Page**: `http://localhost:3000`
+- **Sign Up**: `http://localhost:3000/signup`
+- **Login**: `http://localhost:3000/login`
+- **Dashboard**: `http://localhost:3000/dashboard`
+- **Pantry**: `http://localhost:3000/pantry`
+- **Favorites**: `http://localhost:3000/favorites`
 
 ## Project Structure
 
-- `app/` - Next.js app directory with pages
-- `app/api/auth/` - API routes for signup and login
-- `app/signup` - Signup page
-- `app/login` - Login page
-- `app/dashboard` - Dashboard page shown after login
-- `lib/db.ts` - Database utilities
-- `instrumentation.ts` - Database initialization on startup
+- `app/` - Next.js app directory with routes and pages
+- `app/api/auth/` - Signup and login API routes
+- `app/api/recipes/` - Spoonacular recipe search API route
+- `app/api/inventory/` - Inventory CRUD API route
+- `app/api/favorites/` - Favorites CRUD API route
+- `app/api/chat/` - Gemini AI chat API route
+- `lib/db.ts` - SQLite database initialization and helper
+- `data/auth.db` - SQLite database file (created automatically)
 
 ## Database
 
 The SQLite database is stored in `data/auth.db` and is automatically created on first run.
 
-### User Table Schema
+### Tables
 
-```sql
-CREATE TABLE users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)
-```
+- `users`: stores registered users
+- `ingredients`: stores pantry ingredients for each user
+- `favorites`: stores favorite recipes for each user
 
-## Testing
+## Notes
 
-Try these credentials after signup:
-1. Go to signup page
-2. Enter an email and password
-3. You'll be redirected to login
-4. Use the same credentials to login
-5. You'll see the dashboard page
-
-## Security Notes
-
-This is a simple implementation for learning. For production use:
-- Add CSRF protection
-- Implement proper session management
-- Use HTTPS
-- Add rate limiting
-- Implement email verification
-- Add password reset functionality
-- Use environment variables for sensitive data
+- Keep your API keys secret and do not commit `.env.local`
+- The app stores the database locally in the `data/` folder
+- For production, add proper session handling, HTTPS, and security hardening
