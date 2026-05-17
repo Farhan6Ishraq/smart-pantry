@@ -105,10 +105,10 @@ function InventoryContent() {
   if (loading) {
     return (
       <ProtectedRoute>
-        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FFF1D3' }}>
+        <div className="theme-page flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#CA5995' }}></div>
-            <p style={{ color: '#CA5995' }}>Loading inventory...</p>
+            <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-[#ff7a00]" />
+            <p className="theme-subtitle">Loading inventory...</p>
           </div>
         </div>
       </ProtectedRoute>
@@ -118,55 +118,51 @@ function InventoryContent() {
   return (
     <ProtectedRoute>
       <Navbar />
-      <div className="min-h-screen p-4" style={{ backgroundColor: '#FFF1D3' }}>
-        <div className="max-w-4xl mx-auto">
+      <div className="theme-page">
+        <div className="theme-wrap max-w-4xl">
           <div className="text-center mb-8 pt-4">
-            <h1 className="text-4xl font-bold mb-2" style={{ color: '#5D1C6A' }}>Pantry Inventory</h1>
-            <p style={{ color: '#CA5995' }}>Manage your ingredients and track expiry dates</p>
+            <h1 className="theme-title mb-2">Pantry Inventory</h1>
+            <p className="theme-subtitle">Manage your ingredients and track expiry dates</p>
           </div>
 
-          <div className="rounded-2xl shadow-2xl p-8 mb-8" style={{ backgroundColor: '#FFF1D3' }}>
-            <h2 className="text-2xl font-bold mb-4" style={{ color: '#5D1C6A' }}>
+          <div className="theme-card mb-8 p-8">
+            <h2 className="mb-4 text-2xl font-bold text-[#2d241f]">
               {editingId ? 'Edit Ingredient' : 'Add New Ingredient'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block font-semibold mb-2" style={{ color: '#5D1C6A' }}>Name</label>
+                <label className="mb-2 block font-semibold text-[#2d241f]">Name</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border-2 rounded-lg focus:outline-none"
-                  style={{ borderColor: '#CA5995', color: '#5D1C6A' }}
+                  className="theme-input"
                 />
               </div>
               <div>
-                <label className="block font-semibold mb-2" style={{ color: '#5D1C6A' }}>Quantity</label>
+                <label className="mb-2 block font-semibold text-[#2d241f]">Quantity</label>
                 <input
                   type="text"
                   value={formData.quantity}
                   onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                   placeholder="e.g., 2 cups, 500g"
-                  className="w-full px-4 py-3 border-2 rounded-lg focus:outline-none"
-                  style={{ borderColor: '#CA5995', color: '#5D1C6A' }}
+                  className="theme-input"
                 />
               </div>
               <div>
-                <label className="block font-semibold mb-2" style={{ color: '#5D1C6A' }}>Expiry Date</label>
+                <label className="mb-2 block font-semibold text-[#2d241f]">Expiry Date</label>
                 <input
                   type="date"
                   value={formData.expiryDate}
                   onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                  className="w-full px-4 py-3 border-2 rounded-lg focus:outline-none"
-                  style={{ borderColor: '#CA5995', color: '#5D1C6A' }}
+                  className="theme-input"
                 />
               </div>
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="font-bold py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-lg"
-                  style={{ backgroundColor: '#CA5995', color: '#FFF1D3' }}
+                  className="rounded-full bg-[#ff7a00] px-6 py-3 font-bold text-white transition-all duration-200 hover:-translate-y-0.5"
                 >
                   {editingId ? 'Update' : 'Add'} Ingredient
                 </button>
@@ -177,8 +173,7 @@ function InventoryContent() {
                       setEditingId(null);
                       setFormData({ name: '', quantity: '', expiryDate: '' });
                     }}
-                    className="font-bold py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-lg"
-                    style={{ backgroundColor: '#FFB090', color: '#5D1C6A' }}
+                    className="theme-btn-accent"
                   >
                     Cancel
                   </button>
@@ -188,31 +183,31 @@ function InventoryContent() {
           </div>
 
           {error && (
-            <div className="rounded-lg p-4 mb-6 text-sm" style={{ backgroundColor: '#FFE5DE', color: '#842029', border: '1px solid #F5C2C7' }}>
+            <div className="mb-6 rounded-2xl border border-[#f5c2c7] bg-[#ffe5de] p-4 text-sm text-[#842029]">
               {error}
             </div>
           )}
 
-          <div className="rounded-2xl shadow-2xl p-8" style={{ backgroundColor: '#FFF1D3' }}>
-            <h2 className="text-2xl font-bold mb-4" style={{ color: '#5D1C6A' }}>Your Ingredients</h2>
+          <div className="theme-card p-8">
+            <h2 className="mb-4 text-2xl font-bold text-[#2d241f]">Your Ingredients</h2>
             {ingredients.length === 0 ? (
-              <p style={{ color: '#CA5995' }}>No ingredients added yet. Start by adding some above!</p>
+              <p className="theme-subtitle">No ingredients added yet. Start by adding some above!</p>
             ) : (
               <div className="space-y-4">
                 {ingredients.map((ingredient) => (
                   <div
                     key={ingredient.id}
-                    className="rounded-lg p-4 border-2 flex justify-between items-center"
+                    className="flex items-center justify-between rounded-2xl border-2 p-4"
                     style={{
-                      backgroundColor: isExpired(ingredient.expiry_date) ? '#FFE5DE' : '#FFF1D3',
-                      borderColor: isExpired(ingredient.expiry_date) ? '#F5C2C7' : '#CA5995'
+                      backgroundColor: isExpired(ingredient.expiry_date) ? '#ffe5de' : '#fffaf4',
+                      borderColor: isExpired(ingredient.expiry_date) ? '#f5c2c7' : '#ffd0a3'
                     }}
                   >
                     <div>
-                      <h3 className="font-bold" style={{ color: '#5D1C6A' }}>{ingredient.name}</h3>
-                      {ingredient.quantity && <p style={{ color: '#CA5995' }}>Quantity: {ingredient.quantity}</p>}
+                      <h3 className="font-bold text-[#2d241f]">{ingredient.name}</h3>
+                      {ingredient.quantity && <p className="text-[#7a6b5d]">Quantity: {ingredient.quantity}</p>}
                       {ingredient.expiry_date && (
-                        <p style={{ color: isExpired(ingredient.expiry_date) ? '#842029' : '#CA5995' }}>
+                        <p style={{ color: isExpired(ingredient.expiry_date) ? '#842029' : '#7a6b5d' }}>
                           Expires: {new Date(ingredient.expiry_date).toLocaleDateString()}
                           {isExpired(ingredient.expiry_date) && ' (Expired)'}
                         </p>
@@ -221,15 +216,13 @@ function InventoryContent() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(ingredient)}
-                        className="font-bold py-2 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
-                        style={{ backgroundColor: '#FFB090', color: '#5D1C6A' }}
+                        className="theme-btn-accent px-4 py-2"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(ingredient.id)}
-                        className="font-bold py-2 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
-                        style={{ backgroundColor: '#F5C2C7', color: '#842029' }}
+                        className="rounded-full bg-[#f5c2c7] px-4 py-2 font-bold text-[#842029] transition-all duration-200 hover:-translate-y-0.5"
                       >
                         Delete
                       </button>

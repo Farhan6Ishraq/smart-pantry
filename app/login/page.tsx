@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Navbar } from '@/components/Navbar';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -42,64 +43,64 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#5D1C6A' }}>
-      <div className="rounded-2xl shadow-2xl p-8 w-full max-w-md" style={{ backgroundColor: '#FFF1D3' }}>
+    <div className="theme-page">
+      <Navbar />
+      <div className="theme-wrap flex items-center justify-center pt-8">
+      <div className="theme-card w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold" style={{ color: '#5D1C6A' }}>Welcome Back</h1>
-          <p className="mt-2" style={{ color: '#CA5995' }}>Sign in to your account</p>
+          <h1 className="font-display text-5xl text-[#16100c]">Welcome Back</h1>
+          <p className="mt-2 text-[#7a6b5d]">Sign in to your account</p>
         </div>
         
         {error && (
-          <div className="border-l-4 p-4 rounded-lg mb-6" style={{ backgroundColor: '#FFB090', borderColor: '#CA5995', color: '#5D1C6A' }}>
+          <div className="mb-6 rounded-2xl border border-[#f5c2c7] bg-[#ffe5de] p-4 text-[#842029]">
             <span>{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block font-semibold mb-2" style={{ color: '#5D1C6A' }}>Email</label>
+            <label className="mb-2 block font-semibold text-[#2d241f]">Email</label>
             <input
               type="email"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all duration-200"
-              style={{ borderColor: '#CA5995', color: '#5D1C6A' }}
+              className="theme-input"
             />
           </div>
           
           <div>
-            <label className="block font-semibold mb-2" style={{ color: '#5D1C6A' }}>Password</label>
+            <label className="mb-2 block font-semibold text-[#2d241f]">Password</label>
             <input
               type="password"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all duration-200"
-              style={{ borderColor: '#CA5995', color: '#5D1C6A' }}
+              className="theme-input"
             />
           </div>
           
           <button
             type="submit"
             disabled={loading}
-            className="w-full font-bold py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
-            style={{ backgroundColor: '#CA5995', color: '#FFF1D3' }}
+            className="w-full rounded-full bg-[#ff7a00] py-3 px-4 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
-        <div className="mt-8 pt-6" style={{ borderTop: '1px solid #CA5995' }}>
-          <p className="text-center" style={{ color: '#5D1C6A' }}>
+        <div className="mt-8 border-t border-[#ffd0a3] pt-6">
+          <p className="text-center text-[#2d241f]">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="font-semibold hover:underline transition-colors" style={{ color: '#CA5995' }}>
+            <Link href="/signup" className="font-semibold text-[#ff7a00] hover:underline transition-colors">
               Sign up here
             </Link>
           </p>
         </div>
+      </div>
       </div>
     </div>
   );

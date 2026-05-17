@@ -43,17 +43,17 @@ function FavoritesContent() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen p-4" style={{ backgroundColor: '#FFF1D3' }}>
-        <div className="max-w-6xl mx-auto">
+      <div className="theme-page">
+        <div className="theme-wrap">
           <div className="text-center mb-8 pt-4">
-            <h1 className="text-4xl font-bold mb-2" style={{ color: '#5D1C6A' }}>Favorite Recipes</h1>
-            <p style={{ color: '#CA5995' }}>
+            <h1 className="theme-title mb-2">Favorite Recipes</h1>
+            <p className="theme-subtitle">
               {loading ? 'Loading your favorites...' : `You have ${favorites.length} favorite recipe${favorites.length !== 1 ? 's' : ''}`}
             </p>
           </div>
 
           {error && (
-            <div className="rounded-lg p-4 mb-6 text-sm" style={{ backgroundColor: '#FFE5DE', color: '#842029', border: '1px solid #F5C2C7' }}>
+            <div className="mb-6 rounded-2xl border border-[#f5c2c7] bg-[#ffe5de] p-4 text-sm text-[#842029]">
               {error}
             </div>
           )}
@@ -62,18 +62,16 @@ function FavoritesContent() {
             {favorites.map((favorite) => (
               <div
                 key={favorite.id}
-                className="rounded-2xl shadow-lg hover:shadow-2xl transition-shadow overflow-hidden"
-                style={{ backgroundColor: '#FFF1D3', borderColor: '#CA5995', border: '2px solid #CA5995' }}
+                className="theme-card overflow-hidden transition-shadow hover:shadow-2xl"
               >
-                  <div className="p-6 text-white" style={{ backgroundColor: '#CA5995' }}>
+                  <div className="p-6 text-white bg-[#ff7a00]">
                     <h3 className="text-xl font-bold mb-2">{favorite.title}</h3>
                   </div>
 
                 <div className="px-6 pb-4 pt-4">
                   <Link
                     href={`/recipe/${favorite.recipe_id}`}
-                    className="w-full inline-flex justify-center font-bold py-2 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
-                    style={{ backgroundColor: '#CA5995', color: '#FFF1D3' }}
+                    className="theme-btn-primary w-full"
                   >
                     View Recipe →
                   </Link>
@@ -84,7 +82,7 @@ function FavoritesContent() {
 
           {!loading && favorites.length === 0 && (
             <div className="text-center py-12">
-              <p style={{ color: '#CA5995' }}>No favorite recipes yet. Go to your pantry to add some!</p>
+              <p className="theme-subtitle">No favorite recipes yet. Go to your pantry to add some!</p>
             </div>
           )}
         </div>

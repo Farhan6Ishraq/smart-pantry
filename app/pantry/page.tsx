@@ -17,6 +17,7 @@ function PantryContent() {
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
   const [chatOpen, setChatOpen] = useState(true);
+  const [expandedRecipes, setExpandedRecipes] = useState<Record<number, boolean>>({});
 
   const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
 
@@ -103,6 +104,10 @@ function PantryContent() {
     setInputValue('');
   };
 
+  const toggleRecipeDescription = (recipeId: number) => {
+    setExpandedRecipes((prev) => ({ ...prev, [recipeId]: !prev[recipeId] }));
+  };
+
   const handleChatSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
@@ -133,17 +138,17 @@ function PantryContent() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen p-4" style={{ backgroundColor: '#FFF1D3' }}>
-        <div className="max-w-6xl mx-auto">
+      <div className="theme-page">
+        <div className="theme-wrap">
           <div className="text-center mb-8 pt-4">
-            <h1 className="text-4xl font-bold mb-2" style={{ color: '#5D1C6A' }}>Smart Pantry</h1>
-            <p style={{ color: '#CA5995' }}>
+            <h1 className="theme-title mb-2">Smart Pantry</h1>
+            <p className="theme-subtitle">
               {inventoryLoaded ? 'Your pantry ingredients are loaded. Add more to discover recipes!' : 'Loading your pantry ingredients...'}
             </p>
           </div>
 
-          <div className="rounded-2xl shadow-2xl p-8 mb-8" style={{ backgroundColor: '#FFF1D3' }}>
-            <label className="block font-semibold mb-3" style={{ color: '#5D1C6A' }}>
+          <div className="theme-card mb-8 p-8">
+            <label className="mb-3 block font-semibold text-[#2d241f]">
               {inventoryLoaded ? 'Add More Ingredients' : 'Add Ingredients'}
             </label>
             <input
@@ -152,10 +157,9 @@ function PantryContent() {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleAddIngredient}
               placeholder="Type an ingredient and press Enter..."
-              className="w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all duration-200"
-              style={{ borderColor: '#CA5995', color: '#5D1C6A' }}
+              className="theme-input"
             />
-            <p className="text-sm mt-2" style={{ color: '#CA5995' }}>Try: chicken, tomato, pasta, eggs, mushroom...</p>
+            <p className="mt-2 text-sm text-[#7a6b5d]">Try: chicken, tomato, pasta, eggs, mushroom...</p>
 
             {ingredients.length > 0 && (
               <div className="mt-6">
@@ -164,7 +168,7 @@ function PantryContent() {
                     <div
                       key={index}
                       className="inline-flex items-center gap-2 text-white px-4 py-2 rounded-full shadow-md hover:shadow-lg transition-shadow"
-                      style={{ backgroundColor: '#CA5995' }}
+                      style={{ backgroundColor: '#ff7a00' }}
                     >
                       <span>{ingredient}</span>
                       <button
@@ -178,8 +182,7 @@ function PantryContent() {
                 </div>
                 <button
                   onClick={handleClearAll}
-                  className="text-sm font-semibold underline hover:opacity-75 transition-opacity"
-                  style={{ color: '#5D1C6A' }}
+                  className="text-sm font-semibold text-[#2d241f] underline transition-opacity hover:opacity-75"
                 >
                   Clear all
                 </button>
@@ -188,7 +191,7 @@ function PantryContent() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold mb-4" style={{ color: '#5D1C6A' }}>
+            <h2 className="mb-4 text-2xl font-bold text-[#2d241f]">
               {loading
                 ? 'Searching recipes...'
                 : recipes.length === 0
@@ -199,7 +202,7 @@ function PantryContent() {
             </h2>
 
             {error && (
-              <div className="rounded-lg p-4 mb-6 text-sm" style={{ backgroundColor: '#FFE5DE', color: '#842029', border: '1px solid #F5C2C7' }}>
+              <div className="mb-6 rounded-2xl border border-[#f5c2c7] bg-[#ffe5de] p-4 text-sm text-[#842029]">
                 {error}
               </div>
             )}
@@ -208,46 +211,63 @@ function PantryContent() {
               {recipes.map((recipe) => (
                 <div
                   key={recipe.id}
-                  className="rounded-2xl shadow-lg hover:shadow-2xl transition-shadow overflow-hidden"
-                  style={{ backgroundColor: '#FFF1D3', borderColor: '#CA5995', border: '2px solid #CA5995' }}
+                  className="theme-card overflow-hidden transition-shadow hover:shadow-2xl"
                 >
-                    <div className="p-6 text-white" style={{ backgroundColor: '#CA5995' }}>
-                      <h3 className="text-xl font-bold mb-2">{recipe.name}</h3>
-                      <p className="text-sm" style={{ opacity: 0.9 }}>{recipe.description}</p>
-                    </div>
+                  <div className="bg-[#ff7a00] p-6 text-white">
+                    <h3 className="text-xl font-bold mb-2">{recipe.name}</h3>
+                    <p
+                      className="text-sm"
+                      style={{
+                        opacity: 0.9,
+                        display: '-webkit-box',
+                        WebkitLineClamp: expandedRecipes[recipe.id] ? 'unset' : 4,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: expandedRecipes[recipe.id] ? 'visible' : 'hidden'
+                      }}
+                    >
+                      {recipe.description}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => toggleRecipeDescription(recipe.id)}
+                      className="mt-2 text-sm font-semibold text-white underline underline-offset-2"
+                    >
+                      {expandedRecipes[recipe.id] ? 'Read less' : 'Read more'}
+                    </button>
+                  </div>
 
                   <div className="px-6 pt-4 pb-2">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-semibold" style={{ color: '#5D1C6A' }}>Match</span>
+                      <span className="text-sm font-semibold text-[#2d241f]">Match</span>
                       <div className="flex items-center gap-2">
-                        <div className="w-32 h-2 rounded-full overflow-hidden" style={{ backgroundColor: '#FFB090' }}>
+                        <div className="w-32 h-2 rounded-full overflow-hidden bg-[#ffd9b4]">
                           <div
                             className="h-full transition-all"
-                            style={{ backgroundColor: '#CA5995', width: `${recipe.matchPercentage}%` }}
+                            style={{ backgroundColor: '#ff7a00', width: `${recipe.matchPercentage}%` }}
                           />
                         </div>
-                        <span className="text-lg font-bold" style={{ color: '#CA5995' }}>{recipe.matchPercentage}%</span>
+                        <span className="text-lg font-bold text-[#ff7a00]">{recipe.matchPercentage}%</span>
                       </div>
                     </div>
-                    <p className="text-xs" style={{ color: '#5D1C6A' }}>
+                    <p className="text-xs text-[#47392e]">
                       You have {recipe.matchCount} of {recipe.ingredients.length} ingredients
                     </p>
                   </div>
 
-                  <div className="px-6 py-3" style={{ backgroundColor: '#FFB090', borderTop: '1px solid #CA5995' }}>
+                  <div className="border-t border-[#ffd0a3] bg-[#fff3e4] px-6 py-3">
                     <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
                       <div>
-                        <p style={{ color: '#5D1C6A' }}>Prep Time</p>
-                        <p className="font-semibold" style={{ color: '#5D1C6A' }}>{recipe.prepTime} min</p>
+                        <p className="text-[#47392e]">Prep Time</p>
+                        <p className="font-semibold text-[#2d241f]">{recipe.prepTime} min</p>
                       </div>
                       <div>
-                        <p style={{ color: '#5D1C6A' }}>Servings</p>
-                        <p className="font-semibold" style={{ color: '#5D1C6A' }}>{recipe.servings}</p>
+                        <p className="text-[#47392e]">Servings</p>
+                        <p className="font-semibold text-[#2d241f]">{recipe.servings}</p>
                       </div>
                     </div>
 
                     <div className="mb-4">
-                      <p className="text-xs font-semibold mb-2" style={{ color: '#5D1C6A' }}>Ingredients:</p>
+                      <p className="mb-2 text-xs font-semibold text-[#2d241f]">Ingredients:</p>
                       <div className="flex flex-wrap gap-1">
                         {recipe.ingredients.map((ing, idx) => {
                           const hasIngredient = ingredients.some(userIng =>
@@ -259,8 +279,8 @@ function PantryContent() {
                               key={idx}
                               className="text-xs px-2 py-1 rounded-full"
                               style={{
-                                backgroundColor: hasIngredient ? '#CA5995' : '#5D1C6A',
-                                color: hasIngredient ? '#FFF1D3' : '#FFB090',
+                                backgroundColor: hasIngredient ? '#ff7a00' : '#2d241f',
+                                color: hasIngredient ? '#fffaf4' : '#ffd9b4',
                                 fontWeight: hasIngredient ? 'bold' : 'normal'
                               }}
                             >
@@ -295,15 +315,13 @@ function PantryContent() {
                           alert('Error adding to favorites.');
                         }
                       }}
-                      className="w-full mb-2 inline-flex justify-center font-bold py-2 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
-                      style={{ backgroundColor: '#5D1C6A', color: '#FFF1D3' }}
+                      className="mb-2 inline-flex w-full justify-center rounded-full bg-[#2d241f] py-2 px-4 font-bold text-white transition-all duration-200 hover:-translate-y-0.5"
                     >
                       ❤️ Favorite
                     </button>
                     <Link
                       href={`/recipe/${recipe.id}`}
-                      className="w-full inline-flex justify-center font-bold py-2 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
-                      style={{ backgroundColor: '#CA5995', color: '#FFF1D3' }}
+                      className="theme-btn-accent w-full py-2"
                     >
                       View Recipe →
                     </Link>
@@ -314,7 +332,7 @@ function PantryContent() {
 
             {ingredients.length === 0 && (
               <div className="text-center py-12">
-                <p style={{ color: '#CA5995' }}>Create your first meal by adding ingredients</p>
+                <p className="theme-subtitle">Create your first meal by adding ingredients</p>
               </div>
             )}
           </div>
@@ -323,34 +341,33 @@ function PantryContent() {
 
       <div className="fixed bottom-4 right-4 z-50 w-full max-w-sm">
         {chatOpen ? (
-          <div className="rounded-3xl shadow-2xl overflow-hidden border border-[#CA5995]" style={{ backgroundColor: '#FFF1D3' }}>
-            <div className="flex items-center justify-between px-4 py-3" style={{ backgroundColor: '#CA5995' }}>
+          <div className="overflow-hidden rounded-3xl border border-[#ffd0a3] bg-[#fffaf4] shadow-[0_20px_40px_rgba(70,48,28,0.14)]">
+            <div className="flex items-center justify-between bg-[#ff7a00] px-4 py-3 text-white">
               <div>
                 <p className="font-bold text-white">Recipe AI Assistant</p>
-                <p className="text-xs text-[#FFF1D3] opacity-90">Ask for unique recipes anytime</p>
+                <p className="text-xs text-white/90">Ask for unique recipes anytime</p>
               </div>
               <button
                 onClick={() => setChatOpen(false)}
-                className="text-white font-bold rounded-full w-8 h-8 flex items-center justify-center hover:bg-[#a84a80] transition-colors"
-                style={{ backgroundColor: '#9b4e88' }}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2d241f]/20 text-white transition-colors hover:bg-[#2d241f]/35"
                 aria-label="Minimize chat"
               >
                 −
               </button>
             </div>
             <div className="p-4">
-              <div className="mb-4 max-h-64 overflow-y-auto space-y-3" style={{ backgroundColor: '#FFF1D3' }}>
+              <div className="mb-4 max-h-64 space-y-3 overflow-y-auto rounded-2xl border border-[#ffe0bf] bg-white p-3">
                 {chatMessages.length === 0 ? (
-                  <p className="text-sm" style={{ color: '#5D1C6A' }}>Need a recipe? Send a prompt and the AI will help.</p>
+                  <p className="text-sm text-[#47392e]">Need a recipe? Send a prompt and the AI will help.</p>
                 ) : (
                   chatMessages.map((msg, idx) => (
-                    <div key={idx} className={`px-3 py-2 rounded-2xl ${msg.role === 'user' ? 'ml-auto bg-[#CA5995] text-white' : 'bg-[#FFB090] text-[#5D1C6A]'}`}>
+                    <div key={idx} className={`rounded-2xl px-3 py-2 ${msg.role === 'user' ? 'ml-auto bg-[#ff7a00] text-white' : 'bg-[#fff3e4] text-[#2d241f]'}`}>
                       {msg.content}
                     </div>
                   ))
                 )}
                 {chatLoading && (
-                  <p className="text-sm text-[#5D1C6A]">Thinking...</p>
+                  <p className="text-sm text-[#47392e]">Thinking...</p>
                 )}
               </div>
               <form onSubmit={handleChatSubmit} className="flex gap-2">
@@ -359,14 +376,12 @@ function PantryContent() {
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   placeholder="Ask for recipe ideas..."
-                  className="flex-1 px-3 py-2 rounded-2xl border-2 focus:outline-none"
-                  style={{ borderColor: '#CA5995', color: '#5D1C6A', backgroundColor: '#FFFFFF' }}
+                  className="flex-1 rounded-2xl border-2 border-[#ffd0a3] bg-white px-3 py-2 text-[#2d241f] focus:border-[#ff7a00] focus:outline-none"
                   disabled={chatLoading}
                 />
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-2xl font-semibold"
-                  style={{ backgroundColor: '#CA5995', color: '#FFF1D3' }}
+                  className="rounded-2xl bg-[#2d241f] px-4 py-2 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5"
                   disabled={chatLoading || !chatInput.trim()}
                 >
                   Send
@@ -377,8 +392,7 @@ function PantryContent() {
         ) : (
           <button
             onClick={() => setChatOpen(true)}
-            className="w-full rounded-full px-4 py-3 font-semibold shadow-2xl"
-            style={{ backgroundColor: '#CA5995', color: '#FFF1D3' }}
+            className="w-full rounded-full bg-[#ff7a00] px-4 py-3 font-semibold text-white shadow-[0_20px_40px_rgba(70,48,28,0.2)] transition-all duration-200 hover:-translate-y-0.5"
           >
             Open Recipe AI
           </button>
