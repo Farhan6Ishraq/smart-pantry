@@ -51,7 +51,7 @@ export function Navbar() {
             className={isOnAssistant ? activeBtn : primaryBtn}
           >
             <Bot className="h-4 w-4" />
-            AI Assistant
+            Dashboard
           </Link>
 
           {!isHydrated ? (
